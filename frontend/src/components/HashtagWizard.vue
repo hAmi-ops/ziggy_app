@@ -56,7 +56,7 @@ const result = ref(null)
 
 async function generateHashtags() {
   try {
-    const response = await fetch('/api/generate-hashtags', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate-hashtags`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,11 +64,15 @@ async function generateHashtags() {
       body: JSON.stringify({ platform: platform.value, topic: topic.value }),
     })
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
     const data = await response.json()
     result.value = data
   } catch (error) {
     console.error('Error:', error)
-    alert('Failed to generate hashtags. Please try again.')
+    alert(`Failed to generate hashtags: ${error.message}. Please try again.`)
   }
 }
 
